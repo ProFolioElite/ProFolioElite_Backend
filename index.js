@@ -1,9 +1,11 @@
 const express = require("express");
-const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
-const cors = require('cors');
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const savingDetails = require("./routes/savingDetailsRoutes");
+const template = require("./routes/templetes");
+const cors = require("cors");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const app = express();
 
@@ -15,7 +17,9 @@ app.use(express.json({ extended: false }));
 app.use(cors());
 
 // Define Routes
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api", savingDetails);
+app.use("/templete", template);
 
 const PORT = process.env.PORT || 5000;
 

@@ -14,6 +14,6 @@ router.post('/login', loginUser);
 
 // @route   GET /api/auth
 // @desc    Get logged in user
-router.get('/', auth, getUser);
+router.get('/getUser', auth, getUser);
 
 module.exports = router;

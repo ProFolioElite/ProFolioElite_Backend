@@ -35,10 +35,13 @@ exports.loginUser = async (req, res) => {
 
   try {
     let user = await User.findOne({ email });
+    console.log(user.password);
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
-
+    
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+    console.log(isMatch);
+    console.log(password);
+    // if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
 
     const payload = { user: { id: user.id } };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
@@ -47,7 +50,7 @@ exports.loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send('Server error');
+    res.status(500).json({msg:'Server error'});
   }
 };
 
@@ -61,3 +64,19 @@ exports.getUser = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+// set profession 
+
+exports.setPorfession = async(req,res)=>{
+    const {_id,profession}= req.body;
+ try {
+   const update=  await User.updateOne({_id:_id},{$set:{profession:profession}}) 
+   if(update){
+    res.json({msg:"profession updated"}) 
+    }
+   
+  
+ } catch (error) {
+    res.status(500).json({msg:error})
+ }
+}
