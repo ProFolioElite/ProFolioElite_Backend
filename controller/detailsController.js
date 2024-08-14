@@ -1,38 +1,61 @@
-const UserDetails = require("../models/UserDetails");
-const User = require("../models/User");
-const { ObjectId } = require("mongodb"); // Ensure you import ObjectId if not already done
+const UserProfile = require('../models/userProfileSchema'); // Adjust the path according to your project structure
+const fs = require('fs');
 
-exports.saveUserDetails = async (req, res) => {
-  try {
-    const details = new UserDetails(req.body); // Use const for defining details
-    await details.save();
-    res.status(201).json({ msg: "Your details have been saved." }); // Changed status to 201 for resource creation
-  } catch (error) {
-    res.status(400).json({ msg: error.message }); // Changed status to 400 for bad request errors
-  }
+// Controller function to create a new user profile
+const createUserProfile = async (req, res) => {
+    try {
+        // Extract form data from the request body
+        const {
+            name,
+            email,
+            phone,
+            about,
+            profession,
+            skills,
+            experienceLevel,
+            workExperience,
+            openSourceContribution,
+            projects,
+            socialMediaLinks,
+        } = req.body;
+
+        // Check if a profile photo is uploaded
+        let profilePhoto = null;
+        if (req.file) { // Assuming you are using a middleware like multer for file uploads
+            profilePhoto = fs.readFileSync(req.file.path); // Read the uploaded file as binary data
+        }
+
+        // Create a new user profile instance
+        const newUserProfile = new UserProfile({
+            profilePhoto,
+            name,
+            email,
+            phone,
+            about,
+            profession,
+            skills,
+            experienceLevel,
+            workExperience,
+            openSourceContribution,
+            projects,
+            socialMediaLinks,
+        });
+
+        // Save the user profile to the database
+        const savedProfile = await newUserProfile.save();
+
+        // Send a success response
+        return res.status(201).json({
+            message: 'User profile created successfully',
+            data: savedProfile,
+        });
+    } catch (error) {
+        console.error("Error creating user profile:", error);
+        return res.status(500).json({
+            message: 'Failed to create user profile',
+            error: error.message,
+        });
+    }
 };
 
-// exports.userProfession = async (req, res) => {
-//     const { _id } = req.params;
-//     const { profession } = req.body;
-  
-//     // Validate that _id is a valid ObjectId
-//     // if (!ObjectId.isValid(_id)) {
-//     //   return res.status(400).json({ msg: "Invalid user ID format" });
-//     // }
-  
-//     try {
-//       const user = await User.findById(new ObjectId(_id));
-//       if (!user) {
-//         return res.status(404).json({ msg: "User not found" });
-//       }
-  
-//       // Update the user's profession field
-//       user.profession = profession; // Assuming the User schema has a profession field
-//       await user.save(); // Save the updated user
-  
-//       res.status(200).json({ msg: "The profession has been set" });
-//     } catch (error) {
-//       res.status(500).json({ msg: error.message });
-//     }
-//   };
+module.exports = { createUserProfile };
