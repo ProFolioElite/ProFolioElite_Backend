@@ -63,6 +63,16 @@ exports.getUser = async (req, res) => {
   }
 };
 
+// logout
+exports.logoutUser = async (req, res) => {
+  // Assuming you're using a token-based authentication system,
+  // the logout process can simply mean invalidating the token on the client-side.
+  // Since JWTs are stateless and don't require server-side session management,
+  // you can inform the client to remove the token.
+
+  res.json({ msg: 'User logged out successfully' });
+};
+
 // set profession 
 
 exports.setPorfession = async(req,res)=>{
