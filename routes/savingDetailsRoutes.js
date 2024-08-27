@@ -9,5 +9,8 @@ const {
 
 router.post("/userDetails", auth, createUserProfile);
 // router.post(`/proffesion`, auth, userProffesion);
+// fetching userDetails 
+
+router.get('/getuserdetails',auth,)
 
 module.exports = router;
