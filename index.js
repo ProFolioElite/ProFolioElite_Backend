@@ -17,14 +17,15 @@ app.use(express.json({ extended: false }));
 // app.use(cors());
 
 // Allow requests from http://localhost:5173
-app.use(cors({
-    origin: "http://localhost:5173", // Allow requests only from this origin
+app.use(
+  cors({
+    origin: `${"http://localhost:5173"},${"https://pro-folio-elite-frontend.vercel.app/"}`, // Allow requests only from this origin
     methods: "GET,POST,PUT,DELETE", // Allowed methods
-    credentials: true               // Allow credentials if needed
-  }));
-  
-app.options('*', cors());  // Allow preflight requests from any origin
+    credentials: true, // Allow credentials if needed
+  })
+);
 
+app.options("*", cors()); // Allow preflight requests from any origin
 
 // Define Routes
 app.use("/api/auth", authRoutes);
