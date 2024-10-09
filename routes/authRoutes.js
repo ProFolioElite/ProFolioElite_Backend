@@ -7,6 +7,7 @@ const {
   loginUser,
   getUser,
   logoutUser,
+  updateTemplateUser
 } = require("../controller/authController");
 
 // @route   POST /api/auth/register
@@ -20,6 +21,10 @@ router.post("/login", loginUser);
 // @route   GET /api/auth
 // @desc    Get logged in user
 router.get("/getUser", auth, getUser);
+
+// @route post /api/auth
+// @ desc post api for updat the template 
+router.post('/template',auth,updateTemplateUser)
 
 // logout
 router.get("/logout", logoutUser);
