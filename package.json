@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "ProFolioElite Backend - The official backend for ProFolioElite, a robust platform for managing user authentication and portfolio data. Built with Node.js, Express, and MongoDB for seamless and secure API services.",
   "main": "index.js",
+  
+
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

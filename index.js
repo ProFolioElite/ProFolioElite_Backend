@@ -15,6 +15,14 @@ connectDB();
 // Init Middleware
 app.use(express.json({ extended: false }));
 // app.use(cors());
+
+// Allow requests from http://localhost:5173
+app.use(cors({
+    origin: "http://localhost:5173", // Allow requests only from this origin
+    methods: "GET,POST,PUT,DELETE", // Allowed methods
+    credentials: true               // Allow credentials if needed
+  }));
+  
 app.options('*', cors());  // Allow preflight requests from any origin
 
 
