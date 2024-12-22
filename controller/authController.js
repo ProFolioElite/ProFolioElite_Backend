@@ -37,15 +37,40 @@ exports.registerUser = async (req, res) => {
 // controller for adding user slected template
 
 exports.updateTemplateUser = async (req, res) => {
-  const { _id, template } = req.body;
+  const { templateName, _id } = req.body;
+
+  // Debug logs for input validation
+  console.log("templateName --->", templateName, "UserId --->", _id);
+
   try {
-    let user = await User.updateOne(
-      { _id: _id },
-      { $set: { template: template } }
+    // Validate the input fields
+    if (!templateName || !_id) {
+      return res
+        .status(400)
+        .json({ error: "templateName and _id are required" });
+    }
+
+    // Update the user's template in the database
+    const result = await User.updateOne(
+      { _id }, // Match the user by _id
+      { $set: { template: templateName } } // Update the template field
     );
-    res.status(200).json({ msg: `${user} template added` });
+
+    // Check if the update was successful
+    if (result.modifiedCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "User not found or template not updated" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Template updated successfully", data: result });
   } catch (error) {
-    res.status(500).json(error);
+    console.error("Error updating template:", error.message);
+
+    // Respond with a proper error message
+    res.status(500).json({ error: "An internal server error occurred" });
   }
 };
 

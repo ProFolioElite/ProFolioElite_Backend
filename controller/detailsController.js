@@ -75,4 +75,8 @@ const getUserProfileDetails = async (req, res) => {
   }
 };
 
+// const getuserInformationForPortfolio= async(req,res)=>{
+//   const 
+// }
+
 module.exports = { createUserProfile, getUserProfileDetails };
