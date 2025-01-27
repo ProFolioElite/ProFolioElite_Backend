@@ -10,11 +10,14 @@ require("dotenv").config();
 const app = express();
 
 // Connect Database
+
 connectDB();
 
 // Init Middleware
 app.use(express.json({ extended: false }));
 app.use(cors());
+
+
 
 // Allow requests from http://localhost:5173
 // app.use(cors({
@@ -26,9 +29,13 @@ app.use(cors());
 // app.options('*', cors());  // Allow preflight requests from any origin
 
 
+
 // Define Routes
+
+
 app.use("/api/auth", authRoutes);
 app.use("/api", savingDetails);
+
 // app.use("/templete", template);
 
 const PORT = process.env.PORT || 5000;

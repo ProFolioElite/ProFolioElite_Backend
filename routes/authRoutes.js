@@ -9,6 +9,7 @@ const {
   logoutUser,
   updateTemplateUser
 } = require("../controller/authController");
+const skills = require('../controller/skillController')
 
 // @route   POST /api/auth/register
 // @desc    Register user
@@ -28,5 +29,6 @@ router.post('/template',auth,updateTemplateUser)
 
 // logout
 router.get("/logout", logoutUser);
+router.post('/skill',skills)
 
 module.exports = router;

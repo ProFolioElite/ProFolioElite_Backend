@@ -2,8 +2,10 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { findOne } = require("../models/userProfileSchema");
 
 // Register user
+
 exports.registerUser = async (req, res) => {
   const { name, email, password, profession, template } = req.body;
 
@@ -37,35 +39,49 @@ exports.registerUser = async (req, res) => {
 // controller for adding user slected template
 
 exports.updateTemplateUser = async (req, res) => {
-  const { templateName, _id } = req.body;
+  const { templateName, _id, email } = req.body;
 
   // Debug logs for input validation
-  console.log("templateName --->", templateName, "UserId --->", _id);
+  console.log(
+    "templateName --->",
+    templateName,
+    "this userEmail_----->",
+    email,
+    "UserId --->",
+    _id
+  );
 
   try {
     // Validate the input fields
-    if (!templateName || !_id) {
+    if (!templateName || !email) {
       return res
         .status(400)
         .json({ error: "templateName and _id are required" });
     }
+    const user = await User.findOne({ email });
+    if (user) {
+      console.log(user);
+    }
 
     // Update the user's template in the database
     const result = await User.updateOne(
-      { _id }, // Match the user by _id
+      { email }, // Match the user by _id
       { $set: { template: templateName } } // Update the template field
     );
-
-    // Check if the update was successful
     if (result.modifiedCount === 0) {
       return res
         .status(404)
         .json({ error: "User not found or template not updated" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Template updated successfully", data: result });
+    const updatedUser = await User.findOne({ email });
+    if (updatedUser) {
+      res
+        .status(200)
+        .json({ message: "Template updated successfully", data: updatedUser });
+    }
+
+    // Check if the update was successful
   } catch (error) {
     console.error("Error updating template:", error.message);
 

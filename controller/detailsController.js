@@ -1,10 +1,29 @@
 const UserProfile = require("../models/userProfileSchema"); // Adjust the path according to your project structure
 const fs = require("fs");
 
-// Controller function to create a new user profile
+const multer = require("multer");
+const path = require("path");
+
+// Configure Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Create this folder
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+// In route definition:
+// Controller
 const createUserProfile = async (req, res) => {
   try {
-    // Extract form data from the request body
+    // Get uploaded file path
+    const profilePhoto = req.file ? req.file.path : null;
+
+    // Parse other fields from FormData
     const {
       name,
       email,
@@ -19,14 +38,11 @@ const createUserProfile = async (req, res) => {
       socialMediaLinks,
     } = req.body;
 
-    // Check if a profile photo is uploaded
-    let profilePhoto = null;
-    if (req.file) {
-      // Assuming you are using a middleware like multer for file uploads
-      profilePhoto = fs.readFileSync(req.file.path); // Read the uploaded file as binary data
-    }
+    // Convert stringified arrays/objects to JSON
+    const parsedWorkExperience = JSON.parse(workExperience);
+    const parsedSocialMediaLinks = JSON.parse(socialMediaLinks);
 
-    // Create a new user profile instance
+    // Create new profile
     const newUserProfile = new UserProfile({
       profilePhoto,
       name,
@@ -34,35 +50,25 @@ const createUserProfile = async (req, res) => {
       phone,
       about,
       profession,
-      skills,
+      skills: skills.split(","), // Convert comma-separated string to array
       experienceLevel,
-      workExperience,
-      openSourceContribution,
-      projects,
-      socialMediaLinks,
+      workExperience: parsedWorkExperience,
+      openSourceContribution: JSON.parse(openSourceContribution),
+      projects: JSON.parse(projects),
+      socialMediaLinks: parsedSocialMediaLinks,
     });
 
-    // Save the user profile to the database
     const savedProfile = await newUserProfile.save();
-
-    // Send a success response
-    return res.status(201).json({
-      message: "User profile created successfully",
-      data: savedProfile,
-    });
+    res.status(201).json(savedProfile);
   } catch (error) {
-    console.error("Error creating user profile:", error);
-    return res.status(500).json({
-      message: "Failed to create user profile",
-      error: error.message,
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 
 const getUserProfileDetails = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await UserProfile.findOne({ email:email });
+    const user = await UserProfile.findOne({ email: email });
     if (!user) {
       return res
         .status(404)
@@ -76,7 +82,7 @@ const getUserProfileDetails = async (req, res) => {
 };
 
 // const getuserInformationForPortfolio= async(req,res)=>{
-//   const 
+//   const
 // }
 
 module.exports = { createUserProfile, getUserProfileDetails };
